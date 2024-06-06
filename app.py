@@ -39,6 +39,10 @@ st.title('Loksabha Election Results 2024 - Seats Won by Each Party')
 # Treemap of number of seats won by each party using plotly
 fig = px.treemap(party_seats, path=['Party Abbreviation'], values='Seats', color='Seats',
                  color_continuous_scale='Viridis', title='Number of Seats Won by Each Party',
-                 hover_data={'Winning Party': True, 'Seats': True})
+                 hover_data={'Winning Party': True, 'Seats': True},
+                 width=800, height=600)
+
+# Make sure to show the full name when hovered
+fig.update_traces(textinfo='label+value+percent parent+percent entry', insidetextorientation='radial')
 
 st.plotly_chart(fig)
