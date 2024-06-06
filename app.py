@@ -19,7 +19,7 @@ st.title('Loksabha Election Results 2024 - Seats Won by Each Party')
 
 # Heatmap of number of seats won by each party
 plt.figure(figsize=(12, 8))
-heatmap_data = party_seats.pivot_table(index='Winning Party', values='Seats')
+heatmap_data = party_seats.set_index('Winning Party').T
 sns.heatmap(heatmap_data, annot=True, fmt='d', cmap='Blues', linewidths=.5)
 plt.title('Number of Seats Won by Each Party')
 st.pyplot(plt)
