@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
+import squarify
 
 # Load the data
 file_path = 'results_2024_winners.csv'
@@ -17,9 +17,9 @@ party_seats.columns = ['Winning Party', 'Seats']
 # Streamlit app
 st.title('Loksabha Election Results 2024 - Seats Won by Each Party')
 
-# Heatmap of number of seats won by each party
-plt.figure(figsize=(12, 8))
-heatmap_data = party_seats.set_index('Winning Party').T
-sns.heatmap(heatmap_data, annot=True, fmt='d', cmap='Blues', linewidths=.5)
-plt.title('Number of Seats Won by Each Party')
-st.pyplot(plt)
+# Treemap of number of seats won by each party
+fig, ax = plt.subplots(1, figsize=(16, 10))
+squarify.plot(sizes=party_seats['Seats'], label=party_seats['Winning Party'], alpha=.8, ax=ax)
+ax.set_title('Number of Seats Won by Each Party', fontsize=20)
+ax.axis('off')
+st.pyplot(fig)
