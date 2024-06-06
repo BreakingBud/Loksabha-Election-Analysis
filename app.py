@@ -30,18 +30,8 @@ data['Party Abbreviation'] = data['Winning Party'].map(party_abbreviations).fill
 party_seats = data['Winning Party'].value_counts().reset_index()
 party_seats.columns = ['Winning Party', 'Seats']
 
-# Define a threshold for the "Others" category
-threshold = 5
-
-# Create the "Others" category
-party_seats['Party Abbreviation'] = party_seats['Winning Party'].map(party_abbreviations)
-party_seats.loc[party_seats['Seats'] < threshold, 'Party Abbreviation'] = 'OTH'
-party_seats.loc[party_seats['Seats'] < threshold, 'Winning Party'] = 'Others'
-
-# Combine the "Others" category into a single row
-others_seats = party_seats[party_seats['Party Abbreviation'] == 'OTH']['Seats'].sum()
-party_seats = party_seats[party_seats['Party Abbreviation'] != 'OTH']
-party_seats = pd.concat([party_seats, pd.DataFrame({'Winning Party': ['Others'], 'Seats': [others_seats], 'Party Abbreviation': ['OTH']})], ignore_index=True)
+# Merge to get abbreviations in the party_seats dataframe
+party_seats = party_seats.merge(pd.DataFrame(list(party_abbreviations.items()), columns=['Winning Party', 'Party Abbreviation']), on='Winning Party')
 
 # Streamlit app
 st.title('Loksabha Election Results 2024 - Seats Won by Each Party')
