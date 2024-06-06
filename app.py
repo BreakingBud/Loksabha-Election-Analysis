@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import squarify
+import plotly.express as px
 
 # Load the data
 file_path = 'results_2024_winners.csv'
@@ -31,10 +30,8 @@ party_seats.columns = ['Winning Party', 'Seats']
 # Streamlit app
 st.title('Loksabha Election Results 2024 - Seats Won by Each Party')
 
-# Treemap of number of seats won by each party
-fig, ax = plt.subplots(1, figsize=(16, 10))
-colors = plt.cm.tab20(range(len(party_seats)))
-squarify.plot(sizes=party_seats['Seats'], label=party_seats['Winning Party'], alpha=.8, ax=ax, color=colors)
-ax.set_title('Number of Seats Won by Each Party', fontsize=20)
-ax.axis('off')
-st.pyplot(fig)
+# Treemap of number of seats won by each party using plotly
+fig = px.treemap(party_seats, path=['Winning Party'], values='Seats', color='Seats',
+                 color_continuous_scale='Viridis', title='Number of Seats Won by Each Party')
+
+st.plotly_chart(fig)
