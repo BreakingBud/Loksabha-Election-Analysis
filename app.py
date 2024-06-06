@@ -19,7 +19,7 @@ st.title('Loksabha Election Results 2024 - Seats Won by Each Party')
 
 # Treemap of number of seats won by each party
 fig, ax = plt.subplots(1, figsize=(16, 10))
-squarify.plot(sizes=party_seats['Seats'], label=party_seats['Winning Party'], alpha=.8, ax=ax)
+squarify.plot(sizes=party_seats['Seats'], label=party_seats['Winning Party'], alpha=.8, ax=ax, color=plt.cm.Blues(range(len(party_seats))))
 ax.set_title('Number of Seats Won by Each Party', fontsize=20)
 ax.axis('off')
 st.pyplot(fig)
