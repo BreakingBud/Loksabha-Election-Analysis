@@ -108,6 +108,10 @@ elif selected == "Constituency Analysis":
     # Filter data based on selected state and constituency
     constituency_data = data_constituencies[(data_constituencies['State'] == selected_state) & (data_constituencies['PC Name'] == selected_constituency)]
 
+    # Winner information
+    winner_data = constituency_data.loc[constituency_data['Total Votes'].idxmax()]
+    winner_name = winner_data['Candidate']
+    winner_party = winner_data['Party']
 
     # Treemap for vote share
     st.header(f'Vote Share in {selected_constituency}')
@@ -116,6 +120,9 @@ elif selected == "Constituency Analysis":
                                   hover_data={'Total Votes': True, 'Candidate': True})
     st.plotly_chart(fig_constituency)
 
+    # Display winner information
+    st.write(f"**Winner:** {winner_name}")
+    st.write(f"**Party:** {winner_party}")
     
     selected_candidate = st.selectbox('Select a Candidate to View Details', constituency_data['Candidate'])
     candidate_details = constituency_data[constituency_data['Candidate'] == selected_candidate]
