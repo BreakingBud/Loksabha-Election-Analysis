@@ -1,12 +1,9 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 
 # Load data
 df = pd.read_csv('results_2024_winners.csv')
-
-# Check the columns in the dataframe
-st.write("Columns in the dataset:", df.columns)
 
 # Ensure 'Winning Party' column is correctly referenced
 party_column_name = 'Winning Party'
@@ -18,16 +15,34 @@ seat_counts.columns = ['party', 'seats']
 # Streamlit app
 st.title('Loksabha Election Results 2024')
 
-# Plotly pie chart
-fig_pie = px.pie(seat_counts, names='party', values='seats', title='Seats Won by Each Party')
-st.plotly_chart(fig_pie)
+# Plotly half-donut chart
+fig_donut = go.Figure(go.Pie(
+    labels=seat_counts['party'],
+    values=seat_counts['seats'],
+    hole=0.4,
+    direction='clockwise',
+    sort=False
+))
 
-# Display party information with Plotly bar chart
-fig_bar = px.bar(seat_counts, x='party', y='seats', title='Seats Won by Each Party', text='seats')
-fig_bar.update_traces(texttemplate='%{text}', textposition='outside')
-fig_bar.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+fig_donut.update_traces(
+    hoverinfo="label+percent",
+    textinfo="none"
+)
 
-st.plotly_chart(fig_bar)
+fig_donut.update_layout(
+    title='Seats Won by Each Party',
+    showlegend=True,
+    annotations=[dict(text='Seats', x=0.5, y=0.5, font_size=20, showarrow=False)],
+    height=600,
+    width=800
+)
+
+fig_donut.update_layout(
+    margin=dict(t=0, b=0, l=0, r=0),
+    annotations=[dict(text='Seats', x=0.5, y=0.5, font_size=20, showarrow=False)],
+)
+
+st.plotly_chart(fig_donut)
 
 # Display party-wise seat details
 st.subheader('Detailed Results by Party')
