@@ -20,7 +20,7 @@ fig_donut = go.Figure(go.Pie(
     labels=seat_counts['party'],
     values=seat_counts['seats'],
     hole=0.5,
-    startangle=90,
+    startangle=180,
     direction='clockwise',
     sort=False,
 ))
@@ -34,23 +34,27 @@ fig_donut.update_layout(
     title='Seats Won by Each Party',
     showlegend=True,
     annotations=[dict(text='Seats', x=0.5, y=0.5, font_size=20, showarrow=False)],
-    height=600,
+    height=400,
     width=800
 )
 
+# Mask the bottom half of the donut to create a half-donut effect
 fig_donut.update_layout(
-    margin=dict(t=0, b=0, l=0, r=0),
-    annotations=[dict(text='Seats', x=0.5, y=0.5, font_size=20, showarrow=False)],
-)
-
-# Update the layout to mask the bottom half of the donut to create a half-donut effect
-fig_donut.add_shape(
-    type="rect",
-    x0=0, y0=0, x1=1, y1=0.5,
-    fillcolor="black",
-    line=dict(
-        width=0,
-    )
+    shapes=[
+        dict(
+            type="rect",
+            x0=-0.5,
+            y0=-1.5,
+            x1=1.5,
+            y1=0,
+            xref="paper",
+            yref="paper",
+            fillcolor="black",
+            line=dict(
+                width=0
+            ),
+        )
+    ]
 )
 
 st.plotly_chart(fig_donut)
