@@ -8,8 +8,11 @@ df = pd.read_csv('results_2024_winners.csv')
 # Check the columns in the dataframe
 st.write("Columns in the dataset:", df.columns)
 
+# Ensure 'Winning Party' column is correctly referenced
+party_column_name = 'Winning Party'
+
 # Data processing
-seat_counts = df['party'].value_counts().reset_index()
+seat_counts = df[party_column_name].value_counts().reset_index()
 seat_counts.columns = ['party', 'seats']
 
 # Streamlit app
