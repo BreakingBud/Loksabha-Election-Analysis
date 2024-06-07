@@ -3,27 +3,15 @@ import pandas as pd
 import plotly.express as px
 from streamlit_option_menu import option_menu
 
-# Load the data
-file_path_1 = 'results_2024_winners.csv'
-file_path_2 = 'results_2024.csv'
+@st.cache_data
+def load_data(file_path):
+    try:
+        data = pd.read_csv(file_path)
+        return data
+    except pd.errors.EmptyDataError:
+        st.error(f"The file {file_path} is empty or not found.")
+        st.stop()
 
-try:
-    data_winners = pd.read_csv(file_path_1)
-except pd.errors.EmptyDataError:
-    st.error("The file results_2024_winners.csv is empty or not found.")
-    st.stop()
-
-try:
-    data_constituencies = pd.read_csv(file_path_2)
-except pd.errors.EmptyDataError:
-    st.error("The file results_2024.csv is empty or not found.")
-    st.stop()
-
-# Data preprocessing for winners data
-data_winners['Margin Votes'] = data_winners['Margin Votes'].str.replace(',', '').replace('-', '0').astype(int)
-data_winners['Winning Party'] = data_winners['Winning Party'].str.replace(r'\(.*?\)', '', regex=True).str.strip()
-
-# Generate abbreviations for each party
 def generate_abbreviation(name):
     words = name.split()
     if len(words) == 1:
@@ -31,8 +19,16 @@ def generate_abbreviation(name):
     else:
         return ''.join([word[0] for word in words]).upper()
 
-party_names = data_winners['Winning Party'].unique()
-party_abbreviations = {name: generate_abbreviation(name) for name in party_names}
+# Load the data
+data_winners = load_data('results_2024_winners.csv')
+data_constituencies = load_data('results_2024.csv')
+
+# Data preprocessing for winners data
+data_winners['Margin Votes'] = data_winners['Margin Votes'].str.replace(',', '').replace('-', '0').astype(int)
+data_winners['Winning Party'] = data_winners['Winning Party'].str.replace(r'\(.*?\)', '', regex=True).str.strip()
+
+# Generate abbreviations for each party
+party_abbreviations = {name: generate_abbreviation(name) for name in data_winners['Winning Party'].unique()}
 data_winners['Party Abbreviation'] = data_winners['Winning Party'].map(party_abbreviations).fillna(data_winners['Winning Party'])
 
 # Calculate the number of seats won by each party
@@ -108,7 +104,6 @@ elif selected == "Constituency Analysis":
     # Filter data based on selected state and constituency
     constituency_data = data_constituencies[(data_constituencies['State'] == selected_state) & (data_constituencies['PC Name'] == selected_constituency)]
 
-
     # Treemap for vote share
     st.header(f'Vote Share in {selected_constituency}')
     fig_constituency = px.treemap(constituency_data, path=['Party'], values='Vote Share', color='Vote Share',
@@ -116,7 +111,6 @@ elif selected == "Constituency Analysis":
                                   hover_data={'Total Votes': True, 'Candidate': True})
     st.plotly_chart(fig_constituency)
 
-    
     selected_candidate = st.selectbox('Select a Candidate to View Details', constituency_data['Candidate'])
     candidate_details = constituency_data[constituency_data['Candidate'] == selected_candidate]
     st.dataframe(candidate_details)
