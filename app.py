@@ -113,4 +113,39 @@ elif selected == "State Wise Analysis":
     state_party_seats = state_party_seats.merge(pd.DataFrame(list(party_abbreviations.items()), columns=['Winning Party', 'Party Abbreviation']), on='Winning Party')
 
     # Heatmap for selected state
-    st.header(f'Number of Seats Won by Each Party in {selected_state}'
+    st.header(f'Number of Seats Won by Each Party in {selected_state}')
+    fig_state = px.treemap(state_party_seats, path=['Party Abbreviation'], values='Seats', color='Seats',
+                           color_continuous_scale='Viridis', title=f'Number of Seats Won by Each Party in {selected_state}',
+                           hover_data={'Winning Party': True, 'Seats': True})
+    st.plotly_chart(fig_state)
+
+# Constituency Analysis Page
+elif selected == "Constituency Analysis":
+    st.header('Constituency Analysis')
+
+    # Dropdown menu for selecting state
+    states = data_constituencies['State'].unique()
+    selected_state = st.selectbox('Select a State', states)
+
+    # Filter constituencies based on selected state
+    constituencies = data_constituencies[data_constituencies['State'] == selected_state]['PC Name'].unique()
+    selected_constituency = st.selectbox('Select a Constituency', constituencies)
+
+    # Filter data based on selected state and constituency
+    constituency_data = data_constituencies[(data_constituencies['State'] == selected_state) & (data_constituencies['PC Name'] == selected_constituency)]
+
+    # Winner information
+    winner_data = constituency_data.loc[constituency_data['Total Votes'].idxmax()]
+    winner_name = winner_data['Candidate']
+    winner_party = winner_data['Party']
+
+    # Treemap for vote share
+    st.header(f'Vote Share in {selected_constituency}')
+    fig_constituency = px.treemap(constituency_data, path=['Party'], values='Vote Share', color='Vote Share',
+                                  color_continuous_scale='Viridis', title=f'Vote Share in {selected_constituency}',
+                                  hover_data={'Total Votes': True, 'Candidate': True})
+    st.plotly_chart(fig_constituency)
+
+    # Display winner information
+    st.write(f"**Winner:** {winner_name}")
+    st.write(f"**Party:** {winner_party}")
