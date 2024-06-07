@@ -5,6 +5,9 @@ import plotly.express as px
 # Load data
 df = pd.read_csv('results_2024_winners.csv')
 
+# Check the columns in the dataframe
+st.write("Columns in the dataset:", df.columns)
+
 # Data processing
 seat_counts = df['party'].value_counts().reset_index()
 seat_counts.columns = ['party', 'seats']
