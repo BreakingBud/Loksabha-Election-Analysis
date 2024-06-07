@@ -5,10 +5,19 @@ from streamlit_option_menu import option_menu
 
 # Load the data
 file_path_1 = 'results_2024_winners.csv'
-data_winners = pd.read_csv(file_path_1)
-
 file_path_2 = 'results_2024.csv'
-data_constituencies = pd.read_csv(file_path_2)
+
+try:
+    data_winners = pd.read_csv(file_path_1)
+except pd.errors.EmptyDataError:
+    st.error("The file results_2024_winners.csv is empty or not found.")
+    st.stop()
+
+try:
+    data_constituencies = pd.read_csv(file_path_2)
+except pd.errors.EmptyDataError:
+    st.error("The file results_2024.csv is empty or not found.")
+    st.stop()
 
 # Data preprocessing for winners data
 data_winners['Margin Votes'] = data_winners['Margin Votes'].str.replace(',', '').replace('-', '0').astype(int)
