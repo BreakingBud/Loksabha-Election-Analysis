@@ -3,6 +3,9 @@ import pandas as pd
 import plotly.express as px
 from streamlit_option_menu import option_menu
 
+# Set page configuration
+st.set_page_config(page_title='Lok Sabha Results', layout='wide')
+
 @st.cache_data
 def load_data(file_path):
     try:
@@ -35,9 +38,6 @@ data_winners['Party Abbreviation'] = data_winners['Winning Party'].map(party_abb
 party_seats = data_winners['Winning Party'].value_counts().reset_index()
 party_seats.columns = ['Winning Party', 'Seats']
 party_seats = party_seats.merge(pd.DataFrame(list(party_abbreviations.items()), columns=['Winning Party', 'Party Abbreviation']), on='Winning Party')
-
-# Streamlit app
-st.set_page_config(page_title='Lok Sabha Results', layout='wide')
 
 # Collapsible hamburger menu
 with st.sidebar:
