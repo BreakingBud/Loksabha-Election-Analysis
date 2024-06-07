@@ -21,17 +21,18 @@ fig_donut = go.Figure(go.Pie(
     values=seat_counts['seats'],
     hole=0.4,
     direction='clockwise',
-    sort=False
+    sort=False,
+    startangle=180
 ))
 
 fig_donut.update_traces(
-    hoverinfo="label+percent",
+    hoverinfo="label+percent+value",
     textinfo="none"
 )
 
 fig_donut.update_layout(
     title='Seats Won by Each Party',
-    showlegend=True,
+    showlegend=False,
     annotations=[dict(text='Seats', x=0.5, y=0.5, font_size=20, showarrow=False)],
     height=600,
     width=800
