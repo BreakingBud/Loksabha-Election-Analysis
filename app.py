@@ -63,6 +63,10 @@ if selected == "Heat Map":
                      color_continuous_scale='Viridis', title='Number of Seats Won by Each Party',
                      hover_data={'Winning Party': True, 'Seats': True})
     st.plotly_chart(fig)
+    
+    selected_party = st.selectbox('Select a Party to View Details', party_seats['Winning Party'])
+    party_details = data_winners[data_winners['Winning Party'] == selected_party]
+    st.dataframe(party_details)
 
 # State Wise Analysis Page
 elif selected == "State Wise Analysis":
@@ -84,6 +88,10 @@ elif selected == "State Wise Analysis":
                            color_continuous_scale='Viridis', title=f'Number of Seats Won by Each Party in {selected_state}',
                            hover_data={'Winning Party': True, 'Seats': True})
     st.plotly_chart(fig_state)
+    
+    selected_party_state = st.selectbox('Select a Party to View Details', state_party_seats['Winning Party'])
+    party_state_details = state_data[state_data['Winning Party'] == selected_party_state]
+    st.dataframe(party_state_details)
 
 # Constituency Analysis Page
 elif selected == "Constituency Analysis":
@@ -115,3 +123,7 @@ elif selected == "Constituency Analysis":
     # Display winner information
     st.write(f"**Winner:** {winner_name}")
     st.write(f"**Party:** {winner_party}")
+    
+    selected_candidate = st.selectbox('Select a Candidate to View Details', constituency_data['Candidate'])
+    candidate_details = constituency_data[constituency_data['Candidate'] == selected_candidate]
+    st.dataframe(candidate_details)
