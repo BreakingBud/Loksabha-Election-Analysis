@@ -105,11 +105,11 @@ elif selected == "Constituency Analysis":
     winner_name = winner_data['Candidate']
     winner_party = winner_data['Party']
 
-    # Donut chart for vote share
-    fig_constituency = px.pie(constituency_data, values='Vote Share', names='Party', title=f'Vote Share in {selected_constituency}',
-                              hover_data={'Total Votes': True, 'Candidate': True}, hole=0.3)
-    fig_constituency.update_traces(textposition='inside', textinfo='percent+label')
-
+    # Treemap for vote share
+    st.header(f'Vote Share in {selected_constituency}')
+    fig_constituency = px.treemap(constituency_data, path=['Party'], values='Vote Share', color='Vote Share',
+                                  color_continuous_scale='Viridis', title=f'Vote Share in {selected_constituency}',
+                                  hover_data={'Total Votes': True, 'Candidate': True})
     st.plotly_chart(fig_constituency)
 
     # Display winner information
