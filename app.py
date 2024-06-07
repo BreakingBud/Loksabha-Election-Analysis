@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
 from streamlit_option_menu import option_menu
+import plotly.express as px
 
 # Load the data
 file_path_1 = 'results_2024_winners.csv'
@@ -68,9 +69,8 @@ if selected == "Seat Distribution":
     y = radius * np.sin(theta)
 
     # Creating colors for each dot based on the party
-    color_map = {
-        party: color for party, color in zip(party_names, px.colors.qualitative.Plotly[:len(party_names)])
-    }
+    colors = px.colors.qualitative.Plotly + px.colors.qualitative.D3 + px.colors.qualitative.T10
+    color_map = {party: colors[i % len(colors)] for i, party in enumerate(party_names)}
     data_winners['Color'] = data_winners['Winning Party'].map(color_map)
 
     # Creating scatter plot
