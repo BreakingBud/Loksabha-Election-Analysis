@@ -15,24 +15,24 @@ seat_counts.columns = ['party', 'seats']
 # Streamlit app
 st.title('Loksabha Election Results 2024')
 
-# Plotly half-donut chart
+# Create half-donut chart
 fig_donut = go.Figure(go.Pie(
     labels=seat_counts['party'],
     values=seat_counts['seats'],
-    hole=0.4,
+    hole=0.5,
+    startangle=90,
     direction='clockwise',
     sort=False,
-    startangle=180
 ))
 
 fig_donut.update_traces(
-    hoverinfo="label+percent+value",
-    textinfo="none"
+    textinfo='none',
+    hoverinfo='label+value+percent'
 )
 
 fig_donut.update_layout(
     title='Seats Won by Each Party',
-    showlegend=False,
+    showlegend=True,
     annotations=[dict(text='Seats', x=0.5, y=0.5, font_size=20, showarrow=False)],
     height=600,
     width=800
@@ -41,6 +41,16 @@ fig_donut.update_layout(
 fig_donut.update_layout(
     margin=dict(t=0, b=0, l=0, r=0),
     annotations=[dict(text='Seats', x=0.5, y=0.5, font_size=20, showarrow=False)],
+)
+
+# Update the layout to mask the bottom half of the donut to create a half-donut effect
+fig_donut.add_shape(
+    type="rect",
+    x0=0, y0=0, x1=1, y1=0.5,
+    fillcolor="black",
+    line=dict(
+        width=0,
+    )
 )
 
 st.plotly_chart(fig_donut)
