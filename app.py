@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
+import numpy as np
 from streamlit_option_menu import option_menu
 
 # Load the data
@@ -47,7 +48,7 @@ st.set_page_config(page_title='Lok Sabha Results', layout='wide')
 with st.sidebar:
     selected = option_menu(
         menu_title="Main Menu",
-        options=["Heat Map", "State Wise Analysis", "Constituency Analysis"],
+        options=["Seat Distribution", "State Wise Analysis", "Constituency Analysis"],
         icons=["map", "bar-chart", "pie-chart"],
         menu_icon="cast",
         default_index=0,
@@ -56,12 +57,45 @@ with st.sidebar:
 
 st.title('Lok Sabha Results')
 
-# Heat Map Page
-if selected == "Heat Map":
-    st.header('Number of Seats Won by Each Party - Heat Map')
-    fig = px.treemap(party_seats, path=['Party Abbreviation'], values='Seats', color='Seats',
-                     color_continuous_scale='Viridis', title='Number of Seats Won by Each Party',
-                     hover_data={'Winning Party': True, 'Seats': True})
+# Seat Distribution Page
+if selected == "Seat Distribution":
+    st.header('Distribution of 543 Seats')
+    
+    # Creating semi-circle coordinates
+    theta = np.linspace(0, np.pi, 543)
+    radius = 1
+    x = radius * np.cos(theta)
+    y = radius * np.sin(theta)
+
+    # Creating colors for each dot based on the party
+    color_map = {
+        party: color for party, color in zip(party_names, px.colors.qualitative.Plotly[:len(party_names)])
+    }
+    data_winners['Color'] = data_winners['Winning Party'].map(color_map)
+
+    # Creating scatter plot
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=x,
+        y=y,
+        mode='markers',
+        marker=dict(
+            size=10,
+            color=data_winners['Color'],
+            line=dict(width=2)
+        ),
+        text=data_winners['Winning Party'],
+        hoverinfo='text'
+    ))
+
+    fig.update_layout(
+        title='543 Constituencies Represented as Dots in a Semi-Circle',
+        xaxis=dict(showgrid=False, zeroline=False, visible=False),
+        yaxis=dict(showgrid=False, zeroline=False, visible=False),
+        showlegend=False,
+        height=600
+    )
+
     st.plotly_chart(fig)
 
 # State Wise Analysis Page
@@ -79,39 +113,4 @@ elif selected == "State Wise Analysis":
     state_party_seats = state_party_seats.merge(pd.DataFrame(list(party_abbreviations.items()), columns=['Winning Party', 'Party Abbreviation']), on='Winning Party')
 
     # Heatmap for selected state
-    st.header(f'Number of Seats Won by Each Party in {selected_state}')
-    fig_state = px.treemap(state_party_seats, path=['Party Abbreviation'], values='Seats', color='Seats',
-                           color_continuous_scale='Viridis', title=f'Number of Seats Won by Each Party in {selected_state}',
-                           hover_data={'Winning Party': True, 'Seats': True})
-    st.plotly_chart(fig_state)
-
-# Constituency Analysis Page
-elif selected == "Constituency Analysis":
-    st.header('Constituency Analysis')
-
-    # Dropdown menu for selecting state
-    states = data_constituencies['State'].unique()
-    selected_state = st.selectbox('Select a State', states)
-
-    # Filter constituencies based on selected state
-    constituencies = data_constituencies[data_constituencies['State'] == selected_state]['PC Name'].unique()
-    selected_constituency = st.selectbox('Select a Constituency', constituencies)
-
-    # Filter data based on selected state and constituency
-    constituency_data = data_constituencies[(data_constituencies['State'] == selected_state) & (data_constituencies['PC Name'] == selected_constituency)]
-
-    # Winner information
-    winner_data = constituency_data.loc[constituency_data['Total Votes'].idxmax()]
-    winner_name = winner_data['Candidate']
-    winner_party = winner_data['Party']
-
-    # Treemap for vote share
-    st.header(f'Vote Share in {selected_constituency}')
-    fig_constituency = px.treemap(constituency_data, path=['Party'], values='Vote Share', color='Vote Share',
-                                  color_continuous_scale='Viridis', title=f'Vote Share in {selected_constituency}',
-                                  hover_data={'Total Votes': True, 'Candidate': True})
-    st.plotly_chart(fig_constituency)
-
-    # Display winner information
-    st.write(f"**Winner:** {winner_name}")
-    st.write(f"**Party:** {winner_party}")
+    st.header(f'Number of Seats Won by Each Party in {selected_state}'
